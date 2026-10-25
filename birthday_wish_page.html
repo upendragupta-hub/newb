@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Birthday Magic 🎂</title>
+<style>
+  :root { --pink:#ff4f9a; --purple:#7b2ff7; --cream:#fff8fb; }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; min-height:100vh; overflow:hidden; color:#fff;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    background: radial-gradient(circle at 15% 20%, #ff9acb 0, transparent 28%),
+                radial-gradient(circle at 85% 75%, #8b5cf6 0, transparent 32%),
+                linear-gradient(135deg,#241044,#511a70 55%,#1b1648);
+  }
+  .glow { position:fixed; inset:0; pointer-events:none; background:linear-gradient(120deg,transparent 20%,#ffffff08 50%,transparent 80%); }
+  .stars { position:fixed; inset:0; pointer-events:none; opacity:.75;
+    background-image:radial-gradient(#fff 1px,transparent 1.5px),radial-gradient(#ffd8ed 1px,transparent 1.5px);
+    background-size:70px 70px, 113px 113px; background-position:0 0, 32px 45px;
+  }
+  .wrap { position:relative; z-index:2; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .card {
+    width:min(760px,100%); padding:clamp(28px,6vw,58px) 24px; text-align:center;
+    border:1px solid #ffffff55; border-radius:32px; background:#ffffff12;
+    backdrop-filter:blur(14px); box-shadow:0 25px 80px #10051c66;
+    position:relative; overflow:hidden;
+  }
+  .card:before { content:""; position:absolute; width:260px;height:260px; border-radius:50%; background:#ff7dbd22; top:-130px;right:-70px; }
+  .cake { font-size:clamp(56px,10vw,84px); filter:drop-shadow(0 8px 18px #ff80bf55); animation:bob 2.6s ease-in-out infinite; }
+  h1 { font-size:clamp(2.5rem,8vw,5.5rem); line-height:1.02; margin:16px 0 12px; letter-spacing:-2px; }
+  h1 span { color:#ffd4e9; text-shadow:0 0 28px #ff70b6aa; }
+  .subtitle { color:#fce7f3; font-size:clamp(1rem,2.6vw,1.25rem); line-height:1.7; max-width:570px; margin:0 auto 24px; }
+  .name { display:inline-block; margin:8px 0 20px; padding:10px 20px; border:1px solid #ffffff55; border-radius:999px; background:#ffffff12; color:#ffe0ef; font-weight:700; letter-spacing:1px; }
+  .actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  button, .upload-label { border:0; border-radius:999px; padding:13px 20px; font-size:1rem; font-weight:700; cursor:pointer; transition:transform .2s, box-shadow .2s; }
+  button:hover, .upload-label:hover { transform:translateY(-3px); box-shadow:0 10px 25px #ff4f9a44; }
+  .primary { background:linear-gradient(100deg,#ff65a9,#ff9bcb); color:#421039; }
+  .secondary, .upload-label { color:#fff; background:#ffffff18; border:1px solid #ffffff55; }
+  #photoInput { display:none; }
+  .hint { margin:22px 0 0; font-size:.88rem; color:#e9d5ff; opacity:.9; }
+  .footer { position:fixed; bottom:15px; left:0; right:0; text-align:center; z-index:2; color:#fce7f3a8; font-size:.8rem; pointer-events:none; }
+  .float { position:fixed; z-index:5; pointer-events:none; width:76px; height:76px; object-fit:cover; border-radius:50%; border:3px solid #fff; box-shadow:0 7px 22px #ff69b4aa; transform:translate(-50%,-50%) scale(.2) rotate(-12deg); animation:pop .85s ease-out forwards; }
+  .emoji { position:fixed; z-index:4; pointer-events:none; font-size:25px; animation:drift 1.3s ease-out forwards; filter:drop-shadow(0 3px 7px #0003); }
+  .confetti { position:fixed; top:-20px; width:9px;height:14px; z-index:8; pointer-events:none; animation:fall linear forwards; }
+  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)} }
+  @keyframes pop { 0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(-18deg)} 25%{opacity:1;transform:translate(-50%,-50%) scale(1.08) rotate(5deg)} 100%{opacity:0;transform:translate(-50%,-80%) scale(.78) rotate(12deg)} }
+  @keyframes drift { 0%{opacity:0;transform:translate(-50%,-50%) scale(.5)} 20%{opacity:1} 100%{opacity:0;transform:translate(-50%,-150%) scale(1.4) rotate(20deg)} }
+  @keyframes fall { to { transform:translateY(110vh) rotate(720deg); opacity:.9; } }
+  @media(max-width:480px){ .card{border-radius:24px;padding:32px 18px}.float{width:58px;height:58px}.hint{font-size:.8rem} }
+  @media (prefers-reduced-motion: reduce) { *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+<div class="stars"></div><div class="glow"></div>
+<main class="wrap">
+  <section class="card">
+    <div class="cake" aria-hidden="true">🎂</div>
+    <div class="name" id="nameTag">TODAY IS ALL ABOUT YOU ✨</div>
+    <h1>Happy Birthday,<br><span id="personName">Beautiful Soul!</span></h1>
+    <p class="subtitle">May your day sparkle with laughter, your heart overflow with happiness, and the year ahead bring you countless beautiful surprises. Keep shining! 💖</p>
+    <div class="actions">
+      <button class="primary" id="celebrateBtn">🎉 Celebrate!</button>
+      <label class="upload-label" for="photoInput">📸 Add your photo</label>
+      <input id="photoInput" type="file" accept="image/*" />
+      <button class="secondary" id="nameBtn">✍️ Add a name</button>
+    </div>
+    <p class="hint">✨ Move your mouse or tap the screen for birthday magic ✨<br>Upload a photo to make it appear wherever you point!</p>
+  </section>
+</main>
+<div class="footer">Made with 💗, wishes & a little magic</div>
+<script>
+(() => {
+  const input = document.getElementById('photoInput');
+  const celebrateBtn = document.getElementById('celebrateBtn');
+  const nameBtn = document.getElementById('nameBtn');
+  const personName = document.getElementById('personName');
+  let photoURL = '';
+  let lastStamp = 0;
+  let moveCount = 0;
+  const emojis = ['💖','✨','🎈','💗','⭐','🎉','🌸'];
+
+  input.addEventListener('change', () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    if (photoURL) URL.revokeObjectURL(photoURL);
+    photoURL = URL.createObjectURL(file);
+    spawnPhoto(window.innerWidth / 2, window.innerHeight / 2);
+  });
+
+  nameBtn.addEventListener('click', () => {
+    const name = prompt('Birthday kis ka hai? Naam likho:');
+    if (name && name.trim()) personName.textContent = name.trim() + '!';
+  });
+
+  function spawnPhoto(x, y) {
+    if (!photoURL) {
+      spawnEmoji(x, y, '📸');
+      return;
+    }
+    const img = document.createElement('img');
+    img.className = 'float';
+    img.src = photoURL;
+    img.alt = 'Birthday photo';
+    img.style.left = x + 'px';
+    img.style.top = y + 'px';
+    document.body.appendChild(img);
+    img.addEventListener('animationend', () => img.remove(), { once:true });
+  }
+
+  function spawnEmoji(x, y, chosen) {
+    const el = document.createElement('span');
+    el.className = 'emoji';
+    el.textContent = chosen || emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove(), { once:true });
+  }
+
+  function pointer(x, y) {
+    const now = performance.now();
+    if (now - lastStamp < 90) return;
+    lastStamp = now;
+    moveCount++;
+    if (photoURL && moveCount % 2 === 0) spawnPhoto(x, y);
+    else spawnEmoji(x, y);
+  }
+
+  document.addEventListener('pointermove', e => pointer(e.clientX, e.clientY), { passive:true });
+  document.addEventListener('pointerdown', e => {
+    if (!e.target.closest('button, label, input')) {
+      if (photoURL) spawnPhoto(e.clientX, e.clientY);
+      else spawnEmoji(e.clientX, e.clientY, '💖');
+    }
+  }, { passive:true });
+
+  function confettiBurst(amount = 90) {
+    const colors = ['#ff5da2','#ffd166','#a78bfa','#6ee7b7','#7dd3fc','#ffffff'];
+    for (let i = 0; i < amount; i++) {
+      const bit = document.createElement('i');
+      bit.className = 'confetti';
+      bit.style.left = Math.random() * 100 + 'vw';
+      bit.style.background = colors[Math.floor(Math.random() * colors.length)];
+      bit.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+      bit.style.animationDuration = (2.2 + Math.random() * 2.8) + 's';
+      bit.style.animationDelay = (Math.random() * .7) + 's';
+      document.body.appendChild(bit);
+      bit.addEventListener('animationend', () => bit.remove(), { once:true });
+    }
+  }
+  celebrateBtn.addEventListener('click', () => {
+    confettiBurst();
+    for (let i = 0; i < 18; i++) {
+      setTimeout(() => spawnEmoji(Math.random()*innerWidth, Math.random()*innerHeight, emojis[i % emojis.length]), i * 65);
+    }
+  });
+})();
+</script>
+</body>
+</html>
